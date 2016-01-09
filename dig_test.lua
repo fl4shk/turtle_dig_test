@@ -146,6 +146,32 @@ function dig_down_then_move_down_with_turn( faced_dir, pos )
 	end
 end
 
+function move_forward( faced_dir, pos )
+	
+	if ( faced_dir[1] == dir_positive_x ) then
+		pos.x = pos.x + 1
+	elseif ( faced_dir[1] == dir_positive_y ) then
+		pos.y = pos.y + 1
+	elseif ( faced_dir[1] == dir_negative_x ) then
+		pos.x = pos.x - 1
+	else --if ( faced_dir[1] == dir_negative_y ) then
+		pos.y = pos.y - 1
+	end
+	
+	turtle.forward()
+	
+end
+
+function move_up( pos )
+	pos.z = pos.z + 1
+	turtle.up()
+end
+
+function move_down( pos )
+	pos.z = pos.z - 1
+	turtle.down()
+end
+
 function main()
 	if ( #args < 3 or #args > 4 ) then
 		print("Usage:  <program name> num_blocks_x num_blocks_y "
@@ -159,24 +185,24 @@ function main()
 	-- x
 	num_blocks_vec.x = tonumber(args[1])
 	if ( num_blocks_vec.x == nil ) then
-		print("Error!  The argument \"" .. args[1] .. "\" is not a "
-			.. "valid number!")
+		print("Error!  The first argument, \"" .. args[1] .. "\", is not "
+			.. "a valid number!")
 		return
 	end
 	
 	-- y
 	num_blocks_vec.y = tonumber(args[2])
 	if ( num_blocks_vec.y == nil ) then
-		print("Error!  The argument \"" .. args[2] .. "\" is not a "
-			.. "valid number!")
+		print("Error!  The second argument, \"" .. args[1] .. "\", is not "
+			.. "a valid number!")
 		return
 	end
 	
 	-- z
 	num_blocks_vec.z = tonumber(args[3])
 	if ( num_blocks_vec.z == nil ) then
-		print("Error!  The argument \"" .. args[3] .. "\" is not a "
-			.. "valid number!")
+		print("Error!  The third argument, \"" .. args[1] .. "\", is not "
+			.. "a valid number!")
 		return
 	end
 	
@@ -206,6 +232,7 @@ function main()
 	end
 	
 	
+	-- Turning, digging, and moving.  Sand or gravel can mess it up.
 	for k = 1, num_blocks_vec.z do
 		
 		for j = 2, num_blocks_vec.y do
@@ -240,6 +267,53 @@ function main()
 			end
 		end
 		
+	end
+	
+	-- Return to starting position
+	if ( pos.x < 0 ) then
+		while ( faced_dir[1] ~= dir_positive_x ) do
+			turn_right(faced_dir)
+		end
+		
+		while ( pos.x ~= 0 ) do
+			move_forward( faced_dir, pos )
+		end
+	elseif ( pos.x > 0 ) then
+		while ( faced_dir[1] ~= dir_negative_x ) do
+			turn_right(faced_dir)
+		end
+		
+		while ( pos.x ~= 0 ) do
+			move_forward( faced_dir, pos )
+		end
+	end
+	
+	if ( pos.y < 0 ) then
+		while ( faced_dir[1] ~= dir_positive_y ) do
+			turn_right(faced_dir)
+		end
+		
+		while ( pos.y ~= 0 ) do
+			move_forward( faced_dir, pos )
+		end
+	elseif ( pos.y > 0 ) then
+		while ( faced_dir[1] ~= dir_negative_y ) do
+			turn_right(faced_dir)
+		end
+		
+		while ( pos.y ~= 0 ) do
+			move_forward( faced_dir, pos )
+		end
+	end
+	
+	if ( pos.z < 0 ) then
+		while ( pos.z < 0 ) do
+			move_up(pos)
+		end
+	elseif ( pos.z > 0 ) then
+		while ( pos.z > 0 ) do
+			move_down(pos)
+		end
 	end
 	
 	
